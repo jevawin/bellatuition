@@ -1,5 +1,6 @@
 const minify = require("@node-minify/core");
 const htmlMinifier = require("@node-minify/html-minifier");
+const babelMinify = require("@node-minify/babel-minify");
 
 minify({
   compressor: htmlMinifier,

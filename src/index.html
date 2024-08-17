@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bella Tuition</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
@@ -14,21 +14,61 @@
 
   <body class="font-sans font-light text-2xl md:text-3xl tracking-wide subpixel-antialiased text-pretty">
     <div class="flex flex-row justify-center px-4">
-      <div class="max-w-screen-md flex flex-col">
+      <div class="max-w-screen-md flex flex-col items-start">
         <img class="w-48 md:w-60 self-center my-6 md:my-12 shadow-2xl rounded-full border border-gray-300" src="images/bella-tuition.jpg"/>
         <h1 class="font-medium text-5xl my-6 md:text-6xl">German Tuition with Bella</h1>
         <p class="my-3">I am a native German speaker offering one-to-one classes to anyone who wishes to improve their ability in German or help with preparation for exams (GCSE or A-level).</p>
         <p class="my-3">I am based in Downton, south of Salisbury, Wiltshire.</p>
         <p class="my-3">I offer online or face-to-face classes.</p>
         <p class="my-3">£20 for 45 minutes.</p>
+        <a data-testimonials href="/testimonials/" class="my-3 text-violet-600 border-b border-b-violet-600 pb-1 hidden">Testimonials</a>
         <hr class="my-3"/>
         <p class="mt-3">
           <strong>Mobile:</strong>&nbsp;07769 681 649</p>
         <iframe class="airtable-embed" src="https://airtable.com/embed/appqFNeD0ktU7Tvh4/pag5D31XOlbeaJUw6/form" frameborder="0" onmousewheel="" width="100%" height="700" style="background: transparent;"></iframe>
       </div>
     </div>
+    <script src="/airtable.browser.js"></script>
     <script>
-      let airtableKey = "patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d";
+      var Airtable = require('airtable');
+      var base = new Airtable({apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'}).base('appqFNeD0ktU7Tvh4');
+
+      const testimonials = [];
+
+      base('Testimonials')
+        .select({
+          // Selecting the first 3 records in Grid view:
+          maxRecords: 1,
+          view: "Grid view",
+          filterByFormula: "{Published} = TRUE()"
+        })
+        .eachPage(function page(records, fetchNextPage) {
+          // This function (`page`) will get called for each page of records.
+
+          records.forEach(function (record) {
+            let name = record.get('Name');
+            let image = record.get('Image');
+            let testimonial = record.get('Testimonial');
+            
+            testimonials.push({name, image, testimonial});
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(err) {
+          if (err) {
+            console.log(`ERROR: ${err}`);
+            return;
+          }
+
+          // if testimonials exist, add link to page
+          if(testimonials.length > 0) {
+            document.querySelector("[data-testimonials]").style.display = "inline-block";
+          }
+        });
     </script>
   </body>
 </html>

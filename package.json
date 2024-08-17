@@ -4,8 +4,9 @@
   "main": "npm run build",
   "scripts": {
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./pub/styles.css --minify",
-    "html": "node index.js",
-    "build": "npm run html && npm run tailwind",
+    "html": "npx node-minify --compressor html-minifier --input './src/index.html' --output './pub/index.html' && npx node-minify --compressor html-minifier --input './src/testimonials/index.html' --output './pub/testimonials/index.html'",
+    "js": "npx node-minify --compressor uglify-js --input './src/airtable.browser.js' --output './pub/airtable.browser.js'",
+    "build": "npm run html && npm run js && npm run tailwind",
     "serve": "npm run build && npx http-server pub -c-1",
     "watch": "nodemon --watch src -e html,css,js --exec npm run serve"
   },
@@ -26,8 +27,9 @@
     "wrangler": "^3.72.0"
   },
   "dependencies": {
-    "@node-minify/core": "^8.0.6",
+    "@node-minify/cli": "^8.0.6",
     "@node-minify/html-minifier": "^8.0.6",
+    "@node-minify/uglify-js": "^8.0.6",
     "http-server": "^14.1.1"
   }
 }

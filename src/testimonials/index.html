@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bella Tuition - Testimonials</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
+    <link rel="manifest" href="/images/icons/site.webmanifest">
+  </head>
+
+  <body class="font-sans font-light text-lg md:text-3xl tracking-wide subpixel-antialiased text-pretty">
+    <div class="fixed w-full bg-white py-5 px-6 border-b border-b-slate-100">
+      <a href="/" class="text-violet-600 border-b border-b-violet-600 pb-1">Back to home</a>
+    </div>
+    <div class="flex flex-row pt-20 px-6">
+      <div data-testimonials="data-testimonials" class="max-w-screen-md flex flex-col gap-3">
+        <p data-loading>Loading testimonials...</p>
+      </div>
+    </div>
+    <script src="/airtable.browser.js"></script>
+    <script>
+      var Airtable = require('airtable');
+      var base = new Airtable({apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'}).base('appqFNeD0ktU7Tvh4');
+
+      base('Testimonials')
+        .select({view: "Grid view", filterByFormula: "{Published} = TRUE()"})
+        .eachPage(function page(records, fetchNextPage) {
+          // This function (`page`) will get called for each page of records.
+
+          records.forEach(function (record) {
+            let name = record.get('Name');
+            let image = record.get('Image');
+            let testimonial = record.get('Testimonial');
+
+            document
+              .querySelector("[data-testimonials]")
+              .insertAdjacentHTML("afterbegin", `
+              <div class="flex flex-row gap-6 border-b border-b-slate-400 pb-6">
+                <div class="flex flex-col gap-4">
+                  <p>${testimonial}</p>
+                  <div class="flex flex-row items-center gap-4">
+                    <img src="${image[0].thumbnails.large.url}" class="rounded-full shadow-2xl h-14 w-auto shadow-xl" />
+                    <h5 class="font-normal">${name}</h5>
+                  </div>
+                </div>
+              </div>
+            `);
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(err) {
+          if (err) {
+            console.error(err);
+            return;
+          }
+
+          document.querySelector("[data-loading]").style.display = "none";
+        });
+    </script>
+  </body>
+</html>
