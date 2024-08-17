@@ -21,54 +21,140 @@
         <p class="my-3">I am based in Downton, south of Salisbury, Wiltshire.</p>
         <p class="my-3">I offer online or face-to-face classes.</p>
         <p class="my-3">£20 for 45 minutes.</p>
-        <a data-testimonials href="/testimonials/" class="my-3 text-violet-600 border-b border-b-violet-600 pb-1 hidden">Testimonials</a>
-        <hr class="my-3"/>
-        <p class="mt-3">
-          <strong>Mobile:</strong>&nbsp;07769 681 649</p>
-        <iframe class="airtable-embed" src="https://airtable.com/embed/appqFNeD0ktU7Tvh4/pag5D31XOlbeaJUw6/form" frameborder="0" onmousewheel="" width="100%" height="700" style="background: transparent;"></iframe>
-      </div>
+        <a data-testimonials="data-testimonials" href="/testimonials/" class="my-3 text-violet-600 border-b border-b-violet-600 pb-1 hidden">Testimonials</a>
+        <hr class="my-3 w-full"/>
+        <h3 class="font-medium text-3xl my-4 md:text-4xl">Contact me to start your tutition</h3>
+        <h5 class="my-3 font-normal">Mobile:</h5>
+        <a href="tel:07769 681 649" class="text-violet-600 border-b border-violet-600 pb-w inline-block">07769 681 649</a>
+      </p>
+      <form data-contact="data-contact" class="flex flex-col gap-4 my-8 w-full">
+        <h5 class="font-normal mb-2">Email:</h5>
+        <div class="flex flex-col gap-2">
+          <label for="name">Your name</label>
+          <input required="required" type="text" name="name" placeholder="Bruce Wayne" class="border border-slate-600 rounded py-3 px-4 text-slate-600 shadow-sm w-full max-w-96"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="email">Your email address</label>
+          <input required="required" type="email" name="email" placeholder="bruce@batman.com" class="border border-slate-600 rounded py-3 px-4 text-slate-600 shadow-sm w-full max-w-96"/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="message">Your email address</label>
+          <textarea required="required" name="message" placeholder="I'd love to learn German in time to visit my friends next year!" class="border border-slate-600 rounded py-3 px-4 text-slate-600 shadow-sm w-full h-56"></textarea>
+        </div>
+        <button data-submit="data-submit" type="submit" class="bg-violet-600 text-white rounded py-3 px-4 shadow-sm w-full max-w-96">✉️ Send!</button>
+        <p data-submitted="data-submitted" class="text-green-600 font-normal hidden">Sent! Thanks for contacting me. I'll reply as soon as I can by email.</p>
+        <p data-failed="data-failed" class="text-red-600 font-normal hidden">Oops! Something went wrong. Please call me or email
+          <a class="text-violet-600 border-b border-violet-600 pb-w inline-block" href="bellarowe.ir@gmail.com">bellarowe.ir@gmail.com</a>
+        </p>
+      </form>
     </div>
-    <script src="/airtable.browser.js"></script>
-    <script>
-      var Airtable = require('airtable');
-      var base = new Airtable({apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'}).base('appqFNeD0ktU7Tvh4');
+  </div>
+  <script src="/airtable.browser.js"></script>
+  <script>
+    var Airtable = require('airtable');
+    var base = new Airtable({apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'}).base('appqFNeD0ktU7Tvh4');
 
-      const testimonials = [];
+    // testimonials
+    const testimonials = [];
 
-      base('Testimonials')
-        .select({
-          // Selecting the first 3 records in Grid view:
-          maxRecords: 1,
-          view: "Grid view",
-          filterByFormula: "{Published} = TRUE()"
-        })
-        .eachPage(function page(records, fetchNextPage) {
-          // This function (`page`) will get called for each page of records.
+    base('Testimonials')
+      .select({
+        // Selecting the first 3 records in Grid view:
+        maxRecords: 1,
+        view: "Grid view",
+        filterByFormula: "{Published} = TRUE()"
+      })
+      .eachPage(function page(records, fetchNextPage) {
+        // This function (`page`) will get called for each page of records.
 
-          records.forEach(function (record) {
-            let name = record.get('Name');
-            let image = record.get('Image');
-            let testimonial = record.get('Testimonial');
-            
-            testimonials.push({name, image, testimonial});
-          });
+        records.forEach(function (record) {
+          let name = record.get('Name');
+          let image = record.get('Image');
+          let testimonial = record.get('Testimonial');
 
-          // To fetch the next page of records, call `fetchNextPage`.
-          // If there are more records, `page` will get called again.
-          // If there are no more records, `done` will get called.
-          fetchNextPage();
+          testimonials.push({name, image, testimonial});
+        });
 
-        }, function done(err) {
+        // To fetch the next page of records, call `fetchNextPage`.
+        // If there are more records, `page` will get called again.
+        // If there are no more records, `done` will get called.
+        fetchNextPage();
+
+      }, function done(err) {
+        if (err) {
+          console.log(`ERROR: ${err}`);
+          return;
+        }
+
+        // if testimonials exist, add link to page
+        if (testimonials.length > 0) {
+          document
+            .querySelector("[data-testimonials]")
+            .style
+            .display = "inline-block";
+        }
+      });
+
+    // form submission
+    document
+      .querySelector("[data-contact]")
+      .addEventListener("submit", event => {
+        // stop submission
+        event.preventDefault();
+
+        // change submit to submitting
+        document
+          .querySelector("[data-submit]")
+          .textContent = "Sending...";
+        document
+          .querySelector("[data-submit]")
+          .disabled = true;
+
+        // send to airtable
+        let name = document
+          .querySelector("[name='name']")
+          .value;
+        let email = document
+          .querySelector("[name='email']")
+          .value;
+        let message = document
+          .querySelector("[name='message']")
+          .value;
+
+        base('Website Responses').create([
+          {
+            "fields": {
+              "Email": email,
+              "Name": name,
+              "Message": message
+            }
+          }
+        ], function (err, records) {
           if (err) {
-            console.log(`ERROR: ${err}`);
+            console.error(err);
+            // show fail message
+            document
+              .querySelector("[data-failed]")
+              .classList
+              .remove("hidden");
+
             return;
           }
 
-          // if testimonials exist, add link to page
-          if(testimonials.length > 0) {
-            document.querySelector("[data-testimonials]").style.display = "inline-block";
-          }
+          // hide submit button
+          document
+            .querySelector("[data-submit]")
+            .classList
+            .add("hidden");
+
+          // show submit message
+          document
+            .querySelector("[data-submitted]")
+            .classList
+            .remove("hidden");
+
         });
-    </script>
-  </body>
+      });
+  </script>
+</body>
 </html>
