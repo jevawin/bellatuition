@@ -1,0 +1,32 @@
+{
+  "name": "bellatuition",
+  "version": "1.0.0",
+  "main": "npm run build",
+  "scripts": {
+    "tailwind": "npx tailwindcss -i ./src/input.css -o ./pub/styles.css --minify",
+    "html": "node index.js",
+    "build": "npm run html && npm run tailwind",
+    "serve": "npm run build && npx http-server pub -c-1",
+    "watch": "nodemon --watch src -e html,css,js --exec npm run serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jevawin/bellatuition.git"
+  },
+  "author": "Jamie Evawin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jevawin/bellatuition/issues"
+  },
+  "homepage": "https://github.com/jevawin/bellatuition#readme",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "tailwindcss": "^3.4.10"
+  },
+  "dependencies": {
+    "@node-minify/core": "^8.0.6",
+    "@node-minify/html-minifier": "^8.0.6",
+    "http-server": "^14.1.1"
+  }
+}
