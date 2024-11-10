@@ -24,27 +24,35 @@
     <script src="/airtable.browser.js"></script>
     <script>
       var Airtable = require('airtable');
-      var base = new Airtable({apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'}).base('appqFNeD0ktU7Tvh4');
+      var base = new Airtable({
+        apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'
+      }).base('appqFNeD0ktU7Tvh4');
 
       base('Testimonials')
-        .select({view: "Grid view", filterByFormula: "{Published} = TRUE()"})
+        .select({
+          view: "Grid view",
+          filterByFormula: "{Published} = TRUE()"
+        })
         .eachPage(function page(records, fetchNextPage) {
           // This function (`page`) will get called for each page of records.
 
-          records.forEach(function (record) {
+          records.forEach(function(record) {
             let name = record.get('Name');
-            let image = record.get('Image');
             let testimonial = record.get('Testimonial');
+            let date = new Date(record.get('Date')).toLocaleDateString('en-gb', {
+              year: "numeric",
+              month: "short"
+            });
 
             document
               .querySelector("[data-testimonials]")
               .insertAdjacentHTML("afterbegin", `
               <div class="flex flex-row gap-6 border-b border-b-slate-400 pb-6">
                 <div class="flex flex-col gap-4">
-                  <p>${testimonial}</p>
+                  <p class="mt-4 p-2 pl-8 border-l-8 border-slate-200 text-slate-700 whitespace-pre-wrap">${testimonial}</p>
                   <div class="flex flex-row items-center gap-4">
-                    <img src="${image[0].thumbnails.large.url}" class="rounded-full shadow-2xl h-14 w-auto shadow-xl" />
                     <h5 class="font-normal">${name}</h5>
+                    <p>— ${date}</p>
                   </div>
                 </div>
               </div>
@@ -66,4 +74,5 @@
         });
     </script>
   </body>
+
 </html>
