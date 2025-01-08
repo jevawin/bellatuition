@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "npm run build",
   "scripts": {
+    "dev": "rm -R ./pub && nodemon --watch src -e html,css,js --exec npm run serve",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./pub/styles.css --minify",
-    "html": "npx node-minify --compressor html-minifier --input './src/index.html' --output './pub/index.html' && npx node-minify --compressor html-minifier --input './src/testimonials/index.html' --output './pub/testimonials/index.html'",
+    "html": "html-minifier --input-dir './src' --output-dir './pub' --file-ext html --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --minify-css true --minify-js true",
     "js": "npx node-minify --compressor uglify-js --input './src/airtable.browser.js' --output './pub/airtable.browser.js'",
-    "build": "npm run html && npm run js && npm run tailwind",
-    "serve": "npm run build && npx http-server pub -c-1",
-    "watch": "nodemon --watch src -e html,css,js --exec npm run serve"
+    "images": "cp -R ./src/images ./pub/images",
+    "build": "npm run html && npm run js && npm run images && npm run tailwind",
+    "serve": "npm run build && npx http-server pub -c-1"
   },
   "repository": {
     "type": "git",
@@ -24,12 +25,11 @@
   "devDependencies": {
     "nodemon": "^3.1.4",
     "tailwindcss": "^3.4.10",
-    "wrangler": "^3.72.0"
-  },
-  "dependencies": {
+    "wrangler": "^3.72.0",
     "@node-minify/cli": "^8.0.6",
     "@node-minify/html-minifier": "^8.0.6",
     "@node-minify/uglify-js": "^8.0.6",
     "http-server": "^14.1.1"
-  }
+  },
+  "dependencies": {}
 }
