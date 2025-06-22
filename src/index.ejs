@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bella Tuition</title>
+    <title><%= content["Tab Title"] %></title>
     <link rel="stylesheet" href="/styles.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
@@ -16,17 +16,18 @@
     <div class="flex flex-row justify-center px-4">
       <div class="max-w-screen-md flex flex-col items-start">
         <img class="w-48 md:w-60 self-center my-6 md:my-12 shadow-2xl rounded-full border border-gray-300" src="images/bella-tuition.jpg" />
-        <h1 class="font-medium text-5xl my-6 md:text-6xl">German Tuition with Bella</h1>
-        <p class="my-3">I am a native German speaker offering one-to-one classes to anyone who wishes to improve their ability in German or help with preparation for exams (GCSE or A-level).</p>
-        <p class="my-3">I am based in Downton, south of Salisbury, Wiltshire.</p>
-        <p class="my-3">I offer online or face-to-face classes.</p>
-        <p class="my-3">£22 for 45 minutes.</p>
-        <a data-testimonials="data-testimonials" href="/testimonials/" class="my-3 text-violet-600 border-b border-b-violet-600 pb-1 hidden">Testimonials</a>
-        <hr class="my-3 w-full" />
-        <h3 class="font-medium text-3xl my-4 md:text-4xl">Contact me to start your tuition</h3>
-        <h5 class="my-3 font-normal">Mobile:</h5>
-        <a href="tel:07769681649" class="text-violet-600 border-b border-violet-600 pb-w inline-block">07769681649</a>
+        <h1 class="font-medium text-5xl my-6 md:text-6xl"><%= content["Page Title"] %></h1>
+        <% content["Opening Paragraph"].split("\n").forEach(p => { %>
+        <p class="my-3">
+          <%= p.trim() %>
         </p>
+        <% }) %>
+        <a data-testimonials="data-testimonials" href="/testimonials/" class="my-3 text-violet-600 border-b border-b-violet-600 pb-1">Testimonials</a>
+        <hr class="my-3 w-full" />
+        <h3 class="font-medium text-3xl my-4 md:text-4xl"><%= content["Contact Section Title"] %></h3>
+        <h5 class="my-3 font-normal">Mobile:</h5>
+        <a href="tel:<%= content["Mobile Number"] %>" class="text-violet-600 border-b border-violet-600 pb-w inline-block"><%= content["Mobile Number"] %></a>
+
         <form data-contact="data-contact" class="flex flex-col gap-4 my-8 w-full">
           <h5 class="font-normal mb-2">Email:</h5>
           <div class="flex flex-col gap-2">
@@ -49,62 +50,11 @@
         </form>
       </div>
     </div>
-    <script src="/airtable.browser.js"></script>
     <script>
-      var Airtable = require('airtable');
-      var base = new Airtable({
-        apiKey: 'patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d'
-      }).base('appqFNeD0ktU7Tvh4');
-
-      // testimonials
-      const testimonials = [];
-
-      base('Testimonials')
-        .select({
-          // Selecting the first 3 records in Grid view:
-          maxRecords: 1,
-          view: "Grid view",
-          filterByFormula: "{Published} = TRUE()"
-        })
-        .eachPage(function page(records, fetchNextPage) {
-          // This function (`page`) will get called for each page of records.
-
-          records.forEach(function(record) {
-            let name = record.get('Name');
-            let image = record.get('Image');
-            let testimonial = record.get('Testimonial');
-
-            testimonials.push({
-              name,
-              image,
-              testimonial
-            });
-          });
-
-          // To fetch the next page of records, call `fetchNextPage`.
-          // If there are more records, `page` will get called again.
-          // If there are no more records, `done` will get called.
-          fetchNextPage();
-
-        }, function done(err) {
-          if (err) {
-            console.log(`ERROR: ${err}`);
-            return;
-          }
-
-          // if testimonials exist, add link to page
-          if (testimonials.length > 0) {
-            document
-              .querySelector("[data-testimonials]")
-              .style
-              .display = "inline-block";
-          }
-        });
-
       // form submission
       document
         .querySelector("[data-contact]")
-        .addEventListener("submit", event => {
+        .addEventListener("submit", async (event) => {
           // stop submission
           event.preventDefault();
 
@@ -127,37 +77,38 @@
             .querySelector("[name='message']")
             .value;
 
-          base('Website Responses').create([{
-            "fields": {
-              "Email": email,
-              "Name": name,
-              "Message": message
-            }
-          }], function(err, records) {
-            if (err) {
-              console.error(err);
-              // show fail message
-              document
-                .querySelector("[data-failed]")
-                .classList
-                .remove("hidden");
+          const response = await fetch("/airtable", {
+            method: "POST",
+            body: JSON.stringify({
+              name,
+              email,
+              message
+            })
+          });
 
-              return;
-            }
-
-            // hide submit button
+          if (!response.ok) {
+            console.error(response);
+            // show fail message
             document
-              .querySelector("[data-submit]")
-              .classList
-              .add("hidden");
-
-            // show submit message
-            document
-              .querySelector("[data-submitted]")
+              .querySelector("[data-failed]")
               .classList
               .remove("hidden");
 
-          });
+            return;
+          }
+
+          // hide submit button
+          document
+            .querySelector("[data-submit]")
+            .classList
+            .add("hidden");
+
+          // show submit message
+          document
+            .querySelector("[data-submitted]")
+            .classList
+            .remove("hidden");
+
         });
     </script>
   </body>

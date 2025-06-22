@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= content["Tab Title"] %> - Testimonials</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/icons/favicon-16x16.png">
+    <link rel="manifest" href="/images/icons/site.webmanifest">
+  </head>
+
+  <body class="font-sans font-light text-lg md:text-3xl tracking-wide subpixel-antialiased text-pretty">
+    <div class="fixed w-full bg-white py-5 px-6 border-b border-b-slate-100">
+      <a href="/" class="text-violet-600 border-b border-b-violet-600 pb-1">Back to home</a>
+    </div>
+    <div class="flex flex-row pt-20 px-6">
+      <div data-testimonials="data-testimonials" class="max-w-screen-md flex flex-col gap-3">
+        <% testimonials.forEach(testimonial => { %>
+        <div class="flex flex-row gap-6 border-b border-b-slate-400 pb-6">
+          <div class="flex flex-col gap-4">
+            <p class="mt-4 p-2 pl-8 border-l-8 border-slate-200 text-slate-700 whitespace-pre-wrap"><%= testimonial.content %></p>
+            <div class="flex flex-row items-center gap-4">
+              <h5 class="font-normal"><%= testimonial.name %></h5>
+              <p>— <%= testimonial.date %></p>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </body>
+
+</html>
