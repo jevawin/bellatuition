@@ -23,6 +23,7 @@
   "description": "",
   "dependencies": {
     "airtable": "^0.12.2",
+    "ejs": "^3.1.10",
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
