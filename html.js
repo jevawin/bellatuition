@@ -2,7 +2,7 @@ import airtable from "airtable";
 import fs from "fs";
 
 const base = new airtable({
-  apiKey: `patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d`,
+  apiKey: process.env.AIRTABLE_API_KEY,
 }).base("appqFNeD0ktU7Tvh4");
 import ejs from "ejs";
 
@@ -62,8 +62,11 @@ const getTestimonials = async () => {
   await new Promise((resolve, reject) => {
     base("Testimonials")
       .select({
-        view: "Grid view",
+        // Don't constrain to a named view: a view's own filters/hidden rows
+        // would silently exclude published testimonials. Gate on the
+        // Published field alone and sort newest-first for deterministic order.
         filterByFormula: "{Published} = TRUE()",
+        sort: [{ field: "Date", direction: "desc" }],
       })
       .eachPage(
         (records, fetchNextPage) => {

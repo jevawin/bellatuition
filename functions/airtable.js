@@ -1,9 +1,9 @@
 import Airtable from "airtable";
 
-const airtable = async ({ request }) => {
+const airtable = async ({ request, env }) => {
   const data = await request.json();
   const base = new Airtable({
-    apiKey: "patxNSHf6whWG6JNC.d0f144943c3a913504913431b49c740cc1378c0e7355998e47af73571270289d",
+    apiKey: env.AIRTABLE_API_KEY,
   }).base("appqFNeD0ktU7Tvh4");
 
   await new Promise((resolve, reject) => {
